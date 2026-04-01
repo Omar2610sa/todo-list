@@ -32,7 +32,61 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Customs Fonts Start */
+@font-face {
+  font-family: Alexandria;
+  src: url("/public/fonts/Alexandria-Regular.ttf");
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: Alexandria;
+  src: url("/public/fonts/Alexandria-Black.ttf");
+  font-weight: 900;
+}
+
+@font-face {
+  font-family: Alexandria;
+  src: url("/public/fonts/Alexandria-Light.ttf");
+  font-weight: 200;
+}
+
+@font-face {
+  font-family: Alexandria;
+  src: url("/public/fonts/Alexandria-Bold.ttf");
+  font-weight: bold;
+}
+
+
+
+/* Customs Fonts End */
+
+
+
+
+/* Todo Styles */
+
+.iconBtn {
+  transition: 0.3s all ease !important;
+}
+
+.iconBtn:hover {
+
+  background: #c5c5c5 !important;
+  box-shadow: 0 7px 7px rgba(0, 0, 0, 0.4);
+}
+
+.todoCard {
+  transition: 0.3s all ease !important;
+}
+
+.todoCard:hover {
+  padding: 10px 0;
+  box-shadow: 0 7px 7px rgba(0, 0, 0, 0.4);
 }
