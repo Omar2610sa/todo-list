@@ -33,7 +33,7 @@ export default function Todo({ todo, handleCheck }) {
     const { todos, setTodos } = useContext(TodosContext)
     const [showDeleteDialog, setShowDeleteDialog] = useState(false)
     const [showUpdateDialog, setShowUpdateDialog] = useState(false)
-    const [updatedTodo, setUpdatedTodo] = useState({ title:todo.title, body: todo.body })
+    const [updatedTodo, setUpdatedTodo] = useState({ title: todo.title, body: todo.body })
 
     // Event Handles Start
     function handleCheck() {
@@ -78,14 +78,14 @@ export default function Todo({ todo, handleCheck }) {
 
     // Updtae Confirm
     function handleUpdateConfirm() {
-        const updatedTodos = todos.map((t) =>{
-            if(todo.id == t.id){
-                return {...t , title:updatedTodo.title , body:updatedTodo.body}
-            } else{
+        const updatedTodos = todos.map((t) => {
+            if (todo.id == t.id) {
+                return { ...t, title: updatedTodo.title, body: updatedTodo.body }
+            } else {
                 return t
             }
         })
-        
+
         setTodos(updatedTodos)
         setShowUpdateDialog(false)
         localStorage.setItem("todos", JSON.stringify(updatedTodos))
@@ -114,7 +114,7 @@ export default function Todo({ todo, handleCheck }) {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleDeleteCLose} >إغلاق</Button>
-                    <Button onClick={handleDeleteConfirm}  autoFocus>
+                    <Button onClick={handleDeleteConfirm} autoFocus>
                         نعم قم بالحذف
                     </Button>
                 </DialogActions>
@@ -144,7 +144,7 @@ export default function Todo({ todo, handleCheck }) {
                             fullWidth
                             variant="standard"
                             value={updatedTodo.title}
-                            onChange={(e) =>{setUpdatedTodo({...updatedTodo, title: e.target.value})}}
+                            onChange={(e) => { setUpdatedTodo({ ...updatedTodo, title: e.target.value }) }}
                         />
                         <TextField
                             autoFocus
@@ -156,7 +156,7 @@ export default function Todo({ todo, handleCheck }) {
                             fullWidth
                             variant="standard"
                             value={updatedTodo.body}
-                            onChange={(e) =>{setUpdatedTodo({...updatedTodo, body: e.target.value})}}
+                            onChange={(e) => { setUpdatedTodo({ ...updatedTodo, body: e.target.value }) }}
                             style={{ marginTop: "20px" }}
                         />
                     </form>
@@ -169,52 +169,56 @@ export default function Todo({ todo, handleCheck }) {
                 </DialogActions>
             </Dialog>
             {/* Update Dialog End */}
-            <Card className='todoCard' sx={{ backgroundColor: "#283593", marginTop: 5, color: "white" }}>
-                <CardContent>
-                    {/* Name Of Task Start */}
-                    <Grid container spacing={2}>
-                        <Grid size={8}>
-                            <Typography variant='h5' style={{ textAlign: "right", textDecoration: todo.isChecked ? "line-through" : 'none' }}>
+            <Card className='todoCard' sx={{ backgroundColor: "#283593", marginTop: 3, color: "white" }}>
+                <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
+                    <Grid container spacing={1}>
+
+                        <Grid size={{ xs: 7, sm: 8 }}>
+                            <Typography
+                                variant='h5'
+                                style={{ textAlign: "right", textDecoration: todo.isChecked ? "line-through" : 'none' }}
+                                sx={{ fontSize: { xs: '1rem', sm: '1.5rem' } }}
+                            >
                                 {todo.title}
                             </Typography>
-                            <Typography variant='h6' style={{ textAlign: "right", }}>
+                            <Typography
+                                variant='h6'
+                                style={{ textAlign: "right" }}
+                                sx={{ fontSize: { xs: '0.85rem', sm: '1.25rem' } }}
+                            >
                                 {todo.body}
                             </Typography>
                         </Grid>
-                        {/* Name Of Task End */}
 
-                        {/* Actions Btns Start */}
-                        <Grid size={4} display="flex" justifyContent="space-around" alignItems="center">
+                        <Grid size={{ xs: 5, sm: 4 }} display="flex" justifyContent="space-around" alignItems="center">
 
-                            {/* Check Btn Start */}
-                            <IconButton className='iconBtn' aria-label="delete" style={{ color: todo.isChecked ? "white" : '#8bc34a', border: '3px solid #8bc34a', backgroundColor: todo.isChecked ? '#8bc34a' : "white" }}
-                                onClick={handleCheck}>
-                                <CheckIcon />
+                            <IconButton
+                                sx={{ width: { xs: 32, sm: 40 }, height: { xs: 32, sm: 40 } }}
+                                style={{ color: todo.isChecked ? "white" : '#8bc34a', border: '3px solid #8bc34a', backgroundColor: todo.isChecked ? '#8bc34a' : "white" }}
+                                onClick={handleCheck}
+                            >
+                                <CheckIcon sx={{ fontSize: { xs: 16, sm: 24 } }} />
                             </IconButton>
-                            {/* Check Btn End */}
 
-                            {/* Edit Btn Start */}
-                            <IconButton className='iconBtn' aria-label="delete" style={{ color: '#1769aa', border: '3px solid #1769aa', backgroundColor: "white" }}>
-                                <EditIcon onClick={handleUpdate} />
+                            <IconButton
+                                sx={{ width: { xs: 32, sm: 40 }, height: { xs: 32, sm: 40 } }}
+                                style={{ color: '#1769aa', border: '3px solid #1769aa', backgroundColor: "white" }}
+                                onClick={handleUpdate}
+                            >
+                                <EditIcon sx={{ fontSize: { xs: 16, sm: 24 } }} />
                             </IconButton>
-                            {/* Edit Btn End */}
 
-                            {/* Delete Btn Start */}
-                            <IconButton className='iconBtn' aria-label="delete" style={{ color: '#b23c17', border: '3px solid #b23c17', backgroundColor: "white" }}
-                                onClick={handleDelete}>
-                                <DeleteIcon />
+                            <IconButton
+                                sx={{ width: { xs: 32, sm: 40 }, height: { xs: 32, sm: 40 } }}
+                                style={{ color: '#b23c17', border: '3px solid #b23c17', backgroundColor: "white" }}
+                                onClick={handleDelete}
+                            >
+                                <DeleteIcon sx={{ fontSize: { xs: 16, sm: 24 } }} />
                             </IconButton>
-                            {/* Delete Btn End */}
 
                         </Grid>
-                        {/* Actions Btns End */}
-
                     </Grid>
-
-
-
                 </CardContent>
-
             </Card>
         </>
     )
