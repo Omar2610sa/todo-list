@@ -17,40 +17,70 @@ import Todo from './Todo';
 
 // Ohters
 import { v4 as uuidv4 } from 'uuid';
+import { useState } from 'react';
+import { useContext } from 'react';
+import { useEffect } from 'react';
+import { TodosContext } from '../contexts/todosContext';
 
-
-
-const todos = [
-    {
-        id: uuidv4(),
-        title: 'المهمه الاولى',
-        body:'تفاصيل المهمه الاولى',
-        isChecked: false
-    },
-    {
-        id: uuidv4(),
-        title: 'المهمه الثانية',
-        body:'تفاصيل المهمه الثانية',
-        isChecked: false
-    },
-    {
-        id: uuidv4(),
-        title: 'المهمه الثالثه',
-        body:'تفاصيل المهمه الثالثه',
-        isChecked: false
-    },
-]
 
 export default function SimpleContainer() {
 
-    const todosJsx = todos.map((t) =>{
-        return(
-            <Todo title={t.title} body={t.body} key={t.id} />
+    const { todos, setTodos } = useContext(TodosContext)
+
+    const [titleInput, setTitleInput] = useState("")
+
+    const [displayedBtn, setDisplayedBtn] = useState("all")
+
+
+
+    function handleAddTodo() {
+        const newTodo =
+        {
+            id: uuidv4(),
+            title: titleInput,
+            body: 'تفاصيل  ' + titleInput,
+            isChecked: false
+        }
+
+        const updatedTodos = [...todos, newTodo]
+        setTodos(updatedTodos)
+        setTitleInput("")
+
+        localStorage.setItem("todos", JSON.stringify(updatedTodos))
+    }
+
+    function checkDisplayed(e) {
+        setDisplayedBtn(e.target.value)
+    }
+    const completedTodo = todos.filter((t) => {
+        return t.isChecked
+    })
+    const notCompletedTodo = todos.filter((t) => {
+        return !t.isChecked
+    })
+
+
+    let todosToRender = todos
+
+    if (displayedBtn == "complete") {
+        todosToRender = completedTodo
+    } else if (displayedBtn == "non-complete") {
+        todosToRender = notCompletedTodo
+    } else {
+        todosToRender = todos
+    }
+
+    const todosJsx = todosToRender.map((t) => {
+        return (
+            <Todo key={t.id} todo={t} />
         )
     })
     return (
         <Container maxWidth="sm">
-            <Card sx={{ minWidth: 275 }}>
+            <Card sx={{ minWidth: 275 }} style={{
+                maxHeight: '80vh',
+                overflow: 'overlay'
+            }}>
                 <CardContent>
                     <Typography variant='h2' style={{ fontWeight: "bold" }}>
                         مهامي اليوميه
@@ -62,19 +92,20 @@ export default function SimpleContainer() {
                     <ToggleButtonGroup
 
                         style={{ direction: "ltr", marginTop: "30px" }}
-                        // value={alignment}
+                        value={displayedBtn}
                         exclusive
-                        // onChange={handleAlignment}
+                        onChange={checkDisplayed}
                         aria-label="text alignment"
+                        color='primary'
                     >
-                        <ToggleButton value="right">
+                        <ToggleButton value="non-complete">
                             الغير منجز
                         </ToggleButton>
-                        <ToggleButton value="center">
+                        <ToggleButton value="complete">
                             المنجز
                         </ToggleButton>
 
-                        <ToggleButton value="left">
+                        <ToggleButton value="all">
                             الكل
                         </ToggleButton>
                     </ToggleButtonGroup>
@@ -91,10 +122,10 @@ export default function SimpleContainer() {
 
                     <Grid container spacing={2} sx={{ marginTop: "20px" }}>
                         <Grid size={8} display="flex" justifyContent="space-around" alignItems="center"  >
-                            <TextField sx={{ width: '100%' }} id="outlined-basic" label="أسم المهمه" variant="outlined" />
+                            <TextField value={titleInput} onChange={(e) => { setTitleInput(e.target.value) }} sx={{ width: '100%' }} id="outlined-basic" label="أسم المهمه" variant="outlined" />
                         </Grid>
-                        <Grid size={4}  display="flex" justifyContent="space-around" alignItems="center" >
-                            <Button sx={{ width: '100%' , height: '100%' }} variant="contained">إضافة المهمه</Button>
+                        <Grid size={4} display="flex" justifyContent="space-around" alignItems="center" >
+                            <Button sx={{ width: '100%', height: '100%' }} variant="contained" onClick={handleAddTodo} disabled={titleInput.length === 0}>إضافة المهمه</Button>
 
                         </Grid>
                     </Grid>
