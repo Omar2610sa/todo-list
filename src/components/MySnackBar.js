@@ -10,7 +10,7 @@ import Alert from '@mui/material/Alert';
 
 
 
-export default function SimpleSnackbar({ open, message }) {
+export default function SimpleSnackbar({ open, message, color }) {
 
 
 
@@ -40,7 +40,7 @@ export default function SimpleSnackbar({ open, message }) {
                 <Alert
                     severity="success"
                     variant="filled"
-                    sx={{ width: { md :"100%", xs: "fit",},textAlign:"center", mx: {xs:'auto'} }}
+                    sx={{ width: { md :"100%", xs: "fit",},textAlign:"center", mx: {xs:'auto'}, backgroundColor: color }}
                 >
                     {message}
                 </Alert>

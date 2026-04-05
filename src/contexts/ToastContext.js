@@ -8,10 +8,13 @@ export const ToastContext = createContext({})
 export const ToastProvider = ({ children }) => {
     const [open, setOpen] = useState(false);
     const [message, setMessage] = useState("");
+    const [color, setColor] = useState("")
 
-    function showHideToast(message) {
+
+    function showHideToast(message, color) {
         setOpen(true)
         setMessage(message)
+        setColor(color)
         setTimeout(() => {
             setOpen(false)
         }, 4000)
@@ -19,7 +22,7 @@ export const ToastProvider = ({ children }) => {
     return (
 
         <ToastContext.Provider value={{ showHideToast }}>
-            <MySnackBar open={open} message={message} />
+            <MySnackBar open={open} message={message} color={color} />
             {children}
         </ToastContext.Provider>
     )

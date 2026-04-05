@@ -32,7 +32,7 @@ export default function SimpleContainer() {
     // States
     const { todos, setTodos } = useContext(TodosContext)
     const { showHideToast } = useToast()
-    
+
     const [titleInput, setTitleInput] = useState("")
     const [displayedBtn, setDisplayedBtn] = useState("all")
     const [showDeleteDialog, setShowDeleteDialog] = useState(false)
@@ -104,7 +104,7 @@ export default function SimpleContainer() {
         setTodos(updatedTodos)
         localStorage.setItem("todos", JSON.stringify(updatedTodos))
         setShowDeleteDialog(false)
-        showHideToast("تم الحذف بنجاح")
+        showHideToast("تم الحذف بنجاح", "#d32f2f")
     }
 
     // Updtae Confirm
@@ -136,7 +136,7 @@ export default function SimpleContainer() {
         setTodos(updatedTodos)
         setShowUpdateDialog(false)
         localStorage.setItem("todos", JSON.stringify(updatedTodos))
-        showHideToast("تم تعديلها بنجاح")
+        showHideToast("تم تعديلها بنجاح", "#5c6bc0" )
 
     }
 
