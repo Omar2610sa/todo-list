@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useState } from 'react';
 import { TodosContext } from './contexts/todosContext';
 import MySnackBar from './components/MySnackBar'
-import { ToastContext } from './contexts/ToastContext';
+import { ToastProvider } from './contexts/ToastContext';
 
 
 const intialTodos = [
@@ -48,21 +48,14 @@ function App() {
     const storageTodos = JSON.parse(localStorage.getItem("todos"))
     return storageTodos ?? intialTodos
   })
-  const [open, setOpen] = useState(false);
-  const [message, setMessage] = useState("");
 
-  function showHideToast(message) {
-    setOpen(true)
-    setMessage(message)
-    setTimeout(() => {
-      setOpen(false)
-    }, 4000)
-  }
+
 
   return (
     <ThemeProvider theme={theme}>
+      <ToastProvider>
 
-      <ToastContext.Provider value={{ showHideToast }}>
+      
         <div className="App" style={{
           display: 'flex',
           alignItems: "center",
@@ -75,10 +68,10 @@ function App() {
             <TodoList />
           </TodosContext.Provider>
 
-          <MySnackBar open={open} message={message} />
+          <MySnackBar />
 
         </div>
-      </ToastContext.Provider>
+      </ToastProvider>
 
     </ThemeProvider>
 

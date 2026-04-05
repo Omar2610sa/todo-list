@@ -48,7 +48,7 @@ export default function Todo({ todo, handleCheck, showDelete, showUpdate }) {
 
         setTodos(updatedTodos)
         localStorage.setItem("todos", JSON.stringify(updatedTodos))
-        todo.isChecked == false? showHideToast("تم إنجازها بنجاح!") : showHideToast("غير منجزة")
+        todo.isChecked == false? showHideToast("تم إنجازها بنجاح") : showHideToast("غير منجزة")
     }
 
     function handleDeleteDialog() {

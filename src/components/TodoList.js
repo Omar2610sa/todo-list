@@ -15,7 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useState } from 'react';
 import { useContext, useMemo } from 'react';
 import { TodosContext } from '../contexts/todosContext';
-import { ToastContext } from '../contexts/ToastContext';
+import { useToast } from '../contexts/ToastContext';
 
 // Dialogs PopUps
 import Dialog from '@mui/material/Dialog';
@@ -31,7 +31,8 @@ export default function SimpleContainer() {
 
     // States
     const { todos, setTodos } = useContext(TodosContext)
-    const { showHideToast } = useContext(ToastContext)
+    const { showHideToast } = useToast()
+    
     const [titleInput, setTitleInput] = useState("")
     const [displayedBtn, setDisplayedBtn] = useState("all")
     const [showDeleteDialog, setShowDeleteDialog] = useState(false)
@@ -53,7 +54,7 @@ export default function SimpleContainer() {
         setTodos(updatedTodos)
         setTitleInput("")
         localStorage.setItem("todos", JSON.stringify(updatedTodos))
-        showHideToast("تم أضافتها بنجاح!")
+        showHideToast("تم أضافتها بنجاح")
     }
 
     function checkDisplayed(e) {
@@ -103,7 +104,7 @@ export default function SimpleContainer() {
         setTodos(updatedTodos)
         localStorage.setItem("todos", JSON.stringify(updatedTodos))
         setShowDeleteDialog(false)
-        showHideToast("تم الحذف بنجاح!")
+        showHideToast("تم الحذف بنجاح")
     }
 
     // Updtae Confirm
@@ -135,7 +136,7 @@ export default function SimpleContainer() {
         setTodos(updatedTodos)
         setShowUpdateDialog(false)
         localStorage.setItem("todos", JSON.stringify(updatedTodos))
-        showHideToast("تم تعديلها بنجاح!")
+        showHideToast("تم تعديلها بنجاح")
 
     }
 
