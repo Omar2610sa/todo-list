@@ -29,9 +29,8 @@ import Button from '@mui/material/Button';
 
 
 
-export default function Todo({ todo, handleCheck }) {
+export default function Todo({ todo, handleCheck, showDelete,showUpdate  }) {
     const { todos, setTodos } = useContext(TodosContext)
-    const [showDeleteDialog, setShowDeleteDialog] = useState(false)
     const [showUpdateDialog, setShowUpdateDialog] = useState(false)
     const [updatedTodo, setUpdatedTodo] = useState({ title: todo.title, body: todo.body })
 
@@ -49,19 +48,16 @@ export default function Todo({ todo, handleCheck }) {
 
     }
 
-    function handleDelete() {
-        setShowDeleteDialog(true)
+    function handleDeleteDialog() {
+    showDelete(todo)
     }
 
     function handleUpdate() {
-        setShowUpdateDialog(true)
+        showUpdate(todo)
     }
 
 
-    function handleDeleteCLose() {
-        setShowDeleteDialog(false)
 
-    }
     function handleUpdateCLose() {
         setShowUpdateDialog(false)
 
@@ -96,79 +92,7 @@ export default function Todo({ todo, handleCheck }) {
 
     return (
         <>
-            {/* Delete Dialog Start */}
-            <Dialog
-                style={{ direction: "rtl" }}
-                onClose={handleDeleteCLose}
-                open={showDeleteDialog}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-            >
-                <DialogTitle id="alert-dialog-title">
-                    هل انت متأكد من حذف تلك المهمة؟
-                </DialogTitle>
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        لا يمكنك التراجع عن حذف بعد إتمامه
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleDeleteCLose} >إغلاق</Button>
-                    <Button onClick={handleDeleteConfirm} autoFocus>
-                        نعم قم بالحذف
-                    </Button>
-                </DialogActions>
-            </Dialog>
-            {/* Delete Dialog End */}
 
-            {/* Update Dialog Start */}
-            <Dialog
-                style={{ direction: "rtl" }}
-                onClose={handleUpdateCLose}
-                open={showUpdateDialog}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-            >
-                <DialogTitle id="alert-dialog-title">
-                    تعديل المهمه
-                </DialogTitle>
-                <DialogContent>
-                    <form id="subscription-form">
-                        <TextField
-                            autoFocus
-                            required
-                            margin="dense"
-                            id="name"
-                            name="email"
-                            label="العنوان"
-                            fullWidth
-                            variant="standard"
-                            value={updatedTodo.title}
-                            onChange={(e) => { setUpdatedTodo({ ...updatedTodo, title: e.target.value }) }}
-                        />
-                        <TextField
-                            autoFocus
-                            required
-                            margin="dense"
-                            id="name"
-                            label="التفاصيل"
-                            type="email"
-                            fullWidth
-                            variant="standard"
-                            value={updatedTodo.body}
-                            onChange={(e) => { setUpdatedTodo({ ...updatedTodo, body: e.target.value }) }}
-                            style={{ marginTop: "20px" }}
-                        />
-                    </form>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleUpdateCLose} >إغلاق</Button>
-                    <Button onClick={handleUpdateConfirm} autoFocus>
-                        تأكيد
-                    </Button>
-                </DialogActions>
-            </Dialog>
-            {/* Update Dialog End */}
             <Card className='todoCard' sx={{ backgroundColor: "#283593", marginTop: 3, color: "white" }}>
                 <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
                     <Grid container spacing={1}>
@@ -211,7 +135,7 @@ export default function Todo({ todo, handleCheck }) {
                             <IconButton
                                 sx={{ width: { xs: 32, sm: 40 }, height: { xs: 32, sm: 40 } }}
                                 style={{ color: '#b23c17', border: '3px solid #b23c17', backgroundColor: "white" }}
-                                onClick={handleDelete}
+                                onClick={handleDeleteDialog}
                             >
                                 <DeleteIcon sx={{ fontSize: { xs: 16, sm: 24 } }} />
                             </IconButton>

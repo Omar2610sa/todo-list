@@ -13,15 +13,33 @@ import Todo from './Todo';
 
 import { v4 as uuidv4 } from 'uuid';
 import { useState } from 'react';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { TodosContext } from '../contexts/todosContext';
+
+// Dialogs PopUps
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+
+
+
 
 export default function SimpleContainer() {
 
+    // States
     const { todos, setTodos } = useContext(TodosContext)
     const [titleInput, setTitleInput] = useState("")
     const [displayedBtn, setDisplayedBtn] = useState("all")
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+    const [showUpdateDialog, setShowUpdateDialog] = useState(false)
+    const [dialogTodo, setDialogTodo] = useState("")
 
+
+
+
+    // Add handle
     function handleAddTodo() {
         const newTodo = {
             id: uuidv4(),
@@ -39,88 +57,233 @@ export default function SimpleContainer() {
         setDisplayedBtn(e.target.value)
     }
 
-    const completedTodo = todos.filter((t) => t.isChecked)
-    const notCompletedTodo = todos.filter((t) => !t.isChecked)
+    // Filteration of Check
+
+    const completedTodo = useMemo(() => {
+        return todos.filter((t) => {
+            return t.isChecked
+        }
+        )
+    }, [todos])
+
+    const notCompletedTodo = useMemo(() => {
+        return todos.filter((t) => {
+            return !t.isChecked
+        }
+        )
+    }, [todos])
+
 
     let todosToRender = todos
     if (displayedBtn === "complete") todosToRender = completedTodo
     else if (displayedBtn === "non-complete") todosToRender = notCompletedTodo
 
+
+
+    // Handlers Start
+
+    // Delete handle
+    function handleDeleteDialog(todo) {
+        setDialogTodo(todo)
+        setShowDeleteDialog(true)
+    }
+
+    function handleDeleteCLose() {
+        setShowDeleteDialog(false)
+
+    }
+
+    function handleDeleteConfirm() {
+        const updatedTodos = todos.filter((t) => {
+            return t.id !== dialogTodo.id
+        })
+        setTodos(updatedTodos)
+        localStorage.setItem("todos", JSON.stringify(updatedTodos))
+        setShowDeleteDialog(false)
+    }
+
+    // Updtae Confirm
+
+    function handleUpdateDialog(todo) {
+        setDialogTodo(todo)
+        setShowUpdateDialog(true)
+    }
+
+
+
+    function handleUpdateCLose() {
+
+        setShowUpdateDialog(false)
+
+    }
+
+    function handleUpdateConfirm() {
+
+
+        const updatedTodos = todos.map((t) => {
+            if (dialogTodo.id == t.id) {
+                return { ...t, title: dialogTodo.title, body: dialogTodo.body }
+            } else {
+                return t
+            }
+        })
+
+        setTodos(updatedTodos)
+        setShowUpdateDialog(false)
+        localStorage.setItem("todos", JSON.stringify(updatedTodos))
+
+    }
+
+
+    // Handlers End
+
+
     const todosJsx = todosToRender.map((t) => (
-        <Todo key={t.id} todo={t} />
+        <Todo key={t.id} todo={t} showDelete={handleDeleteDialog} showUpdate={handleUpdateDialog} />
     ))
 
     return (
-        // ✅ maxWidth="sm" كافي للموبايل، وبيتمدد على الشاشات الكبيرة
-        <Container maxWidth="sm" sx={{ py: { xs: 2, sm: 4 } }}>
-            <Card sx={{ minWidth: 0 }} style={{
-                maxHeight: '90vh',
-                overflow: 'auto'
-            }}>
-                {/* ✅ padding أقل على الموبايل */}
-                <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+        <>
+            {/* Delete Dialog Start */}
+            <Dialog
+                style={{ direction: "rtl" }}
+                onClose={handleDeleteCLose}
+                open={showDeleteDialog}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    هل انت متأكد من حذف تلك المهمة؟
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        لا يمكنك التراجع عن حذف بعد إتمامه
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDeleteCLose} >إغلاق</Button>
+                    <Button onClick={handleDeleteConfirm} autoFocus>
+                        نعم قم بالحذف
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            {/* Delete Dialog End */}
 
-                    {/* ✅ حجم الفونت أصغر على الموبايل */}
-                    <Typography
-                        variant='h2'
-                        style={{ fontWeight: "bold" }}
-                        sx={{ fontSize: { xs: '2rem', sm: '3rem' } }}
-                    >
-                        مهامي اليوميه
-                    </Typography>
-                    <hr />
+            {/* Update Dialog Start */}
+            <Dialog
+                style={{ direction: "rtl" }}
+                onClose={handleUpdateCLose}
+                open={showUpdateDialog}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    تعديل المهمه
+                </DialogTitle>
+                <DialogContent>
+                    <form id="subscription-form">
+                        <TextField
+                            autoFocus
+                            required
+                            margin="dense"
+                            id="name"
+                            name="email"
+                            label="العنوان"
+                            fullWidth
+                            variant="standard"
+                            value={dialogTodo.title}
+                            onChange={(e) => { setDialogTodo({ ...dialogTodo, title: e.target.value }) }}
+                        />
+                        <TextField
+                            autoFocus
+                            required
+                            margin="dense"
+                            id="name"
+                            label="التفاصيل"
+                            type="email"
+                            fullWidth
+                            variant="standard"
+                            value={dialogTodo.body}
+                            onChange={(e) => { setDialogTodo({ ...dialogTodo, body: e.target.value }) }}
+                            style={{ marginTop: "20px" }}
+                        />
+                    </form>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleUpdateCLose} >إغلاق</Button>
+                    <Button onClick={handleUpdateConfirm} autoFocus>
+                        تأكيد
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            {/* Update Dialog End */}
+            <Container maxWidth="sm" sx={{ py: { xs: 2, sm: 4 } }}>
+                <Card sx={{ minWidth: 0 }} style={{
+                    maxHeight: '90vh',
+                    overflow: 'auto'
+                }}>
+                    <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
 
-                    {/* ✅ الأزرار تتمدد على الموبايل */}
-                    <ToggleButtonGroup
-                        sx={{
-                            direction: "ltr",
-                            marginTop: "30px",
-                            width: { xs: '100%', sm: 'auto' } // ✅ full width على الموبايل
-                        }}
-                        value={displayedBtn}
-                        exclusive
-                        onChange={checkDisplayed}
-                        aria-label="text alignment"
-                        color='primary'
-                    >
-                        <ToggleButton value="non-complete" sx={{ flex: { xs: 1, sm: 'unset' } }}>
-                            الغير منجز
-                        </ToggleButton>
-                        <ToggleButton value="complete" sx={{ flex: { xs: 1, sm: 'unset' } }}>
-                            المنجز
-                        </ToggleButton>
-                        <ToggleButton value="all" sx={{ flex: { xs: 1, sm: 'unset' } }}>
-                            الكل
-                        </ToggleButton>
-                    </ToggleButtonGroup>
+                        <Typography
+                            variant='h2'
+                            style={{ fontWeight: "bold" }}
+                            sx={{ fontSize: { xs: '2rem', sm: '3rem' } }}
+                        >
+                            مهامي اليوميه
+                        </Typography>
+                        <hr />
 
-                    {todosJsx}
+                        <ToggleButtonGroup
+                            sx={{
+                                direction: "ltr",
+                                marginTop: "30px",
+                                width: { xs: '100%', sm: 'auto' }
+                            }}
+                            value={displayedBtn}
+                            exclusive
+                            onChange={checkDisplayed}
+                            aria-label="text alignment"
+                            color='primary'
+                        >
+                            <ToggleButton value="non-complete" sx={{ flex: { xs: 1, sm: 'unset' } }}>
+                                الغير منجز
+                            </ToggleButton>
+                            <ToggleButton value="complete" sx={{ flex: { xs: 1, sm: 'unset' } }}>
+                                المنجز
+                            </ToggleButton>
+                            <ToggleButton value="all" sx={{ flex: { xs: 1, sm: 'unset' } }}>
+                                الكل
+                            </ToggleButton>
+                        </ToggleButtonGroup>
 
-                    {/* ✅ Input + Btn تحت بعض على الموبايل */}
-                    <Grid container spacing={2} sx={{ marginTop: "20px" }}>
-                        <Grid size={{ xs: 12, sm: 8 }} display="flex" justifyContent="space-around" alignItems="center">
-                            <TextField
-                                value={titleInput}
-                                onChange={(e) => setTitleInput(e.target.value)}
-                                sx={{ width: '100%' }}
-                                label="أسم المهمه"
-                                variant="outlined"
-                            />
+                        {todosJsx}
+
+                        <Grid container spacing={2} sx={{ marginTop: "20px" }}>
+                            <Grid size={{ xs: 12, sm: 8 }} display="flex" justifyContent="space-around" alignItems="center">
+                                <TextField
+                                    value={titleInput}
+                                    onChange={(e) => setTitleInput(e.target.value)}
+                                    sx={{ width: '100%' }}
+                                    label="أسم المهمه"
+                                    variant="outlined"
+                                />
+                            </Grid>
+                            <Grid size={{ xs: 12, sm: 4 }} display="flex" justifyContent="space-around" alignItems="center">
+                                <Button
+                                    sx={{ width: '100%', height: { xs: '48px', sm: '100%' } }}
+                                    variant="contained"
+                                    onClick={handleAddTodo}
+                                    disabled={titleInput.length === 0}
+                                >
+                                    إضافة المهمه
+                                </Button>
+                            </Grid>
                         </Grid>
-                        <Grid size={{ xs: 12, sm: 4 }} display="flex" justifyContent="space-around" alignItems="center">
-                            <Button
-                                sx={{ width: '100%', height: { xs: '48px', sm: '100%' } }}
-                                variant="contained"
-                                onClick={handleAddTodo}
-                                disabled={titleInput.length === 0}
-                            >
-                                إضافة المهمه
-                            </Button>
-                        </Grid>
-                    </Grid>
 
-                </CardContent>
-            </Card>
-        </Container>
+                    </CardContent>
+                </Card>
+            </Container>
+        </>
+
     );
 }
