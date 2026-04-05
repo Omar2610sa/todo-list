@@ -15,6 +15,7 @@ import EditIcon from '@mui/icons-material/Edit';
 // Others
 import { useContext } from 'react';
 import { TodosContext } from '../contexts/todosContext';
+import { ToastContext } from '../contexts/ToastContext';
 import { useState } from 'react';
 
 
@@ -29,8 +30,10 @@ import Button from '@mui/material/Button';
 
 
 
-export default function Todo({ todo, handleCheck, showDelete,showUpdate  }) {
+export default function Todo({ todo, handleCheck, showDelete, showUpdate }) {
     const { todos, setTodos } = useContext(TodosContext)
+    const { showHideToast } = useContext(ToastContext)
+
     const [showUpdateDialog, setShowUpdateDialog] = useState(false)
     const [updatedTodo, setUpdatedTodo] = useState({ title: todo.title, body: todo.body })
 
@@ -45,11 +48,11 @@ export default function Todo({ todo, handleCheck, showDelete,showUpdate  }) {
 
         setTodos(updatedTodos)
         localStorage.setItem("todos", JSON.stringify(updatedTodos))
-
+        todo.isChecked == false? showHideToast("تم إنجازها بنجاح!") : showHideToast("غير منجزة")
     }
 
     function handleDeleteDialog() {
-    showDelete(todo)
+        showDelete(todo)
     }
 
     function handleUpdate() {
